@@ -21,12 +21,6 @@ def build_regex(template):
     :param template: uri template string
     :returns: regular expression string by template
 
-    >>> print template_to_regex('/a/static/path')
-    ^\/a\/static\/path$
-
-    >>> print template_to_regex('/{year:\d\d\d\d}/{month:\d\d}/{slug}')
-    ^\/(?P<year>\d\d\d\d)\/(?P<month>\d\d)\/(?P<slug>[^/]+)$
-
     """
     regex = ''
     last_pos = 0
