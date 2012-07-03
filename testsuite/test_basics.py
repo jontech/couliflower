@@ -2,7 +2,7 @@
 import types
 from unittest import TestCase, TestLoader
 
-from couliflower.router import build_regex, Router
+from couliflower.router import build_route, Router
 from couliflower.helpers import load_view, view
 
 
@@ -26,13 +26,13 @@ class TestRegexPaths(TestCase):
 
     def test_static_path(self):
         """Should create regex to match URI path without args"""
-        res = build_regex('/a/static/path')
+        res = build_route('/a/static/path')
         expected = '^\/a\/static\/path$'
         self.assertEqual(res, expected)
 
     def test_arg_in_path(self):
         """Should make re to match args in URI path"""
-        res = build_regex('/<foo>')
+        res = build_route('/<foo>')
         expected = '^\\/(?P<foo>[^/]+)$'
         self.assertEqual(res, expected)
 

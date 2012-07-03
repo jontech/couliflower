@@ -15,7 +15,7 @@ var_regex = re.compile(r'''
     ''', re.VERBOSE)
 
 
-def build_regex(template):
+def build_route(template):
     """URI template matching
 
     :param template: uri template string
@@ -44,7 +44,7 @@ class Router(object):
     def add_route(self, template, controller, **vars):
         if isinstance(controller, basestring):
             controller = load_view(controller)
-        self.routes.append((re.compile(build_regex(template)),
+        self.routes.append((re.compile(build_route(template)),
                             controller,
                             vars))
 
