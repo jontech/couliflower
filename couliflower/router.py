@@ -48,6 +48,13 @@ class Router(object):
                             controller,
                             vars))
 
+    def route(self, route, **vars):
+        """Decorator function to register views"""
+        def wraper(view):
+            route_rule = re.compile(build_route(route))
+            self.routes.append((route_rule, view, vars))
+        return wraper
+
     def __call__(self, environ, start_response):
         req = Request(environ)
         for regex, controller, vars in self.routes:

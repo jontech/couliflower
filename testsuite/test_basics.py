@@ -51,7 +51,6 @@ class TestRouting(TestCase):
 
     def test_index_uri(self):
         """Should register root URI path using router"""
-        @view
         def dofoo():
             return 'yay'
         self.router.add_route('/', dofoo)
@@ -60,6 +59,18 @@ class TestRouting(TestCase):
         self.assertEqual(res_repath.pattern, '^\/$')
         self.assertEqual(res_view, dofoo)
         self.assertEqual(res_extra, {})
+
+    def test_decorated_view(self):
+        """Should register root URI path using router decorator"""
+        @self.router.route('/')
+        def dofoo():
+            return 'yay'
+        self.assertEqual(len(self.router.routes), 1)
+        res_repath, res_view, res_extra = self.router.routes[0]
+        self.assertEqual(res_repath.pattern, '^\/$')
+        self.assertTrue(iscallable(res_view))
+        self.assertEqual(res_extra, {})
+
 
     def test_specific_view(self):
         """Should load specific view"""
