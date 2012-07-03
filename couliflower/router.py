@@ -4,7 +4,7 @@ import re
 from webob import Request
 from webob import exc
 
-from couliflower.helpers import load_view
+from couliflower.helpers import load_view, view
 
 
 var_regex = re.compile(r'''
@@ -50,9 +50,9 @@ class Router(object):
 
     def route(self, route, **vars):
         """Decorator function to register views"""
-        def wraper(view):
+        def wraper(f):
             route_rule = re.compile(build_route(route))
-            self.routes.append((route_rule, view, vars))
+            self.routes.append((route_rule, view(f), vars))
         return wraper
 
     def __call__(self, environ, start_response):
