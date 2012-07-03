@@ -41,12 +41,11 @@ class Router(object):
     def __init__(self):
         self.routes = []
 
-    def add_route(self, template, controller, **vars):
-        if isinstance(controller, basestring):
-            controller = load_view(controller)
-        self.routes.append((re.compile(build_route(template)),
-                            controller,
-                            vars))
+    def add_route(self, route, view, **vars):
+        if isinstance(view, basestring):
+            view = load_view(view)
+        route_rule = re.compile(build_route(route))
+        self.routes.append((route_rule, view, vars))
 
     def route(self, route, **vars):
         """Decorator function to register views"""
