@@ -3,7 +3,7 @@ import types
 from unittest import TestCase, TestLoader
 
 from couliflower.router import build_route, Router
-from couliflower.helpers import load_view, view
+from couliflower.view import load_view, view
 
 
 def iscallable(thing):
