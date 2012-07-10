@@ -29,14 +29,12 @@ class TestRegexPaths(TestCase):
     def test_static_path(self):
         """Should create regex to match URI path without args"""
         res = build_route('/a/static/path')
-        expected = '^\/a\/static\/path$'
-        self.assertEqual(res, expected)
+        self.assertEqual(res, '^\/a\/static\/path$')
 
     def test_arg_in_path(self):
         """Should make re to match args in URI path"""
         res = build_route('/<foo>')
-        expected = '^\\/(?P<foo>[^/]+)$'
-        self.assertEqual(res, expected)
+        self.assertEqual(res, '^\\/(?P<foo>[^/]+)$')
 
     def test_arg_validation(self):
         """Should verify path argument as string length 16"""
@@ -76,7 +74,7 @@ class TestRouting(TestCase):
         self.assertTrue(iscallable(res_view))
         self.assertEqual(res_extra, {})
 
-    def test_pathargs_rule_in_router(self):
+    def test_pathargs_rule(self):
         """Should register regex to parse args from URI path"""
         def dofoo():
             return 'yay'
@@ -93,6 +91,16 @@ class TestRouting(TestCase):
         req = Request.blank('/songs/daisy')
         resp = req.get_response(self.router)
         self.assertEqual(resp.body, 'daisy')
+
+    def test_uri_query(self):
+        """Should pass query args to view function"""
+        @self.router.route('/tada')
+        def dofoo(request):
+            foo = request.GET.get('foo')
+            return foo
+        req = Request.blank('/tada?foo=bar')
+        resp = req.get_response(self.router)
+        self.assertEqual(resp.body, 'bar')
 
 
 def suite():
