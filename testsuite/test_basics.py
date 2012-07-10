@@ -2,6 +2,8 @@
 import types
 from unittest import TestCase, TestLoader
 
+from webob import Request
+
 from couliflower.router import build_route, Router
 from couliflower.view import load_view, view
 
@@ -49,6 +51,9 @@ class TestRouting(TestCase):
     def setUp(self):
         self.router = Router()
 
+    def tearDown(self):
+        del self.router
+
     def test_index_uri(self):
         """Should register root URI path using router"""
         def dofoo():
@@ -71,14 +76,23 @@ class TestRouting(TestCase):
         self.assertTrue(iscallable(res_view))
         self.assertEqual(res_extra, {})
 
+    def test_pathargs_rule_in_router(self):
+        """Should register regex to parse args from URI path"""
+        def dofoo():
+            return 'yay'
+        self.router.add_route('/<foo>', dofoo)
+        self.assertEqual(len(self.router.routes), 1)
+        res_repath, res_view, res_extra = self.router.routes[0]
+        self.assertEqual(res_repath.pattern, '^\\/(?P<foo>[^/]+)$')
 
-    def test_specific_view(self):
-        """Should load specific view"""
-        pass
-
-    def test_path_args(self):
-        """Should load specific view and pass path arg"""
-        pass
+    def test_view_pathargs(self):
+        """Should pass uri args to view function"""
+        @self.router.route('/songs/<name>')
+        def sing(request, name=None):
+            return name
+        req = Request.blank('/songs/daisy')
+        resp = req.get_response(self.router)
+        self.assertEqual(resp.body, 'daisy')
 
 
 def suite():
