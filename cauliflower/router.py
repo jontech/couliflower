@@ -4,7 +4,7 @@ import re
 from webob import Request
 from webob import exc
 
-from couliflower.view import load_view, view
+from cauliflower.view import load_view, view
 
 
 var_regex = re.compile(r'''

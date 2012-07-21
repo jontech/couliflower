@@ -4,8 +4,8 @@ from unittest import TestCase, TestLoader
 
 from webob import Request
 
-from couliflower.router import build_route, Router
-from couliflower.view import load_view, view
+from cauliflower.router import build_route, Router
+from cauliflower.view import load_view, view
 
 
 def iscallable(thing):

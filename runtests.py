@@ -2,7 +2,7 @@
 """
 
 Test runner which uses unittest ``discover`` method to find all
-tests within ``couliflower.testsuite`` and run them.
+tests within ``cauliflower.testsuite`` and run them.
 
 """
 import os
