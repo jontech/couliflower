@@ -8,9 +8,6 @@ tests within ``cauliflower.testsuite`` and run them.
 import os
 import sys
 
-# add couliflower to python path
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
 # TODO: try to import unittest2 for python2.4-2.6 backward compatability
 from unittest import TextTestRunner, defaultTestLoader
 
