@@ -36,9 +36,9 @@ class StorageForge(Forge):
         """Attempt to load storage adapter using configuration and pass
         it to return.
         """
-        adapter_toimport = '.'.join((self.adapters_dir, self.adapter_name))
+        full_adapter_name = self.adapter_name + '_adapter'
+        adapter_toimport = '.'.join((self.adapters_dir, full_adapter_name))
         __import__(adapter_toimport)
         module = sys.modules[adapter_toimport]
-        print module
         adapter = getattr(module, 'Adapter')
         return adapter()
