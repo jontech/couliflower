@@ -21,7 +21,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     test = args.test
 
-    if test:
+    if test is not None:
         path = '.'.join((TESTSUITE_DIR, test))
         test_suite = defaultTestLoader.loadTestsFromName(path)
     else:
