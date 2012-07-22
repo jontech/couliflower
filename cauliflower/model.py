@@ -32,7 +32,8 @@ class Model(object):
         self.storage = forge.build()
         self.fields = self._introspect()
         # FIXME: this will be called many times
-        self.storage.sync(self.fields)
+        name = self.__class__.__name__.lower()
+        self.storage.sync(name, self.fields)
 
     def save(self):
         values = []
