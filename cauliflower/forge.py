@@ -26,6 +26,7 @@ class StorageForge(Forge):
     def __init__(self):
         """load configuration configuration needed for storage adapter loading"""
         self.adapters_dir = 'cauliflower.adapters'
+        # TODO: move config loading to parent class
         try:
             self.adapter_name = config.STORAGE_NAME
         except AttributeError as e:
@@ -40,5 +41,5 @@ class StorageForge(Forge):
         adapter_toimport = '.'.join((self.adapters_dir, full_adapter_name))
         __import__(adapter_toimport)
         module = sys.modules[adapter_toimport]
-        adapter = getattr(module, 'Adapter')
-        return adapter()
+        Adapter = getattr(module, 'Adapter')
+        return Adapter()
