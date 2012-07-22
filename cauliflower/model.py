@@ -29,10 +29,18 @@ class Model(object):
 
     def __init__(self):
         forge = StorageForge()
-        # TODO: would be nicer to have class method
         self.storage = forge.build()
         self.fields = self._introspect()
+        # FIXME: this will be called many times
         self.storage.sync(self.fields)
+
+    def save(self):
+        values = []
+        for name, field in self.fields.items():
+            attr = getattr(self, name)
+            # TODO: check type, if exists
+            values.append(attr)
+        self.storage.save(values)
 
     def _introspect(self):
         """Finds properties and registers them to use within adapter"""

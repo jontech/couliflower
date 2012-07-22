@@ -14,15 +14,19 @@ class Adapter(object):
         #       from db if there is API
         self._create_table('bla', fields)
 
+    def save(self, values):
+        query = "INSERT INTO bla VALUES {}".format(tuple(values))
+        cur = self.conn.cursor()
+        cur.execute(query)
+        self.conn.commit()
+
     def _create_table(self, name, fields, **options):
         columns = []
         for field_name, field in fields.items():
             field_type = field.field_type
-            if field_type == 'numeric':
-                field_type = 'real'
             columns.append('{0} {1}'.format(field_name, field_type))
         columns = ','.join(columns)
-        query = "CREATE TABLE bla ({0})".format(columns)
+        query = "CREATE TABLE IF NOT EXISTS bla ({0})".format(columns)
         cur = self.conn.cursor()
         cur.execute(query)
         self.conn.commit()
