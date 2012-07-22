@@ -29,6 +29,7 @@ class StorageForge(Forge):
         # TODO: move config loading to parent class
         try:
             self.adapter_name = config.STORAGE_NAME
+            self.adapter_conf = config.STORAGE_CONF
         except AttributeError as e:
             missing = str(e).split()[-1]
             raise StoreConfigError("Missing {0} configuration".format(missing))
@@ -42,4 +43,4 @@ class StorageForge(Forge):
         __import__(adapter_toimport)
         module = sys.modules[adapter_toimport]
         Adapter = getattr(module, 'Adapter')
-        return Adapter()
+        return Adapter(**self.adapter_conf)
