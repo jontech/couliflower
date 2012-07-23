@@ -30,10 +30,7 @@ class Model(object):
     def __init__(self):
         forge = StorageForge()
         self.storage = forge.build()
-        self.fields = self._introspect()
-        # FIXME: this will be called many times
-        name = self.__class__.__name__.lower()
-        self.storage.sync(name, self.fields)
+        self.name = self.__class__.__name__.lower()
 
     def save(self):
         values = []
@@ -42,6 +39,10 @@ class Model(object):
             # TODO: check type, if exists
             values.append(attr)
         self.storage.save(values)
+
+    def sync(self):
+        fields = self._introspect()
+        self.storage.sync(self.name, fields)
 
     def _introspect(self):
         """Finds properties and registers them to use within adapter"""
