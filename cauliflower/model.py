@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from copy import copy
+
 from cauliflower.forge import StorageForge
 
 
@@ -46,7 +48,9 @@ class Model(object):
 
     def __init__(self):
         forge = StorageForge()
+        # TODO: fix forge build method name to build_storage
         self.storage = forge.build()
+        # TODO: put this to forge build as name argument
         self.name = self.__class__.__name__.lower()
 
     def save(self):
@@ -57,6 +61,20 @@ class Model(object):
             # TODO: check type, if exists
             values.append(attr)
         self.storage.save(values)
+
+    def filter(self):
+        """Gets data from storage, builds Model objects and returns list"""
+        retval = []
+        values_list = self.storage.filter()
+        for values in values_list:
+            clone = copy(self)
+            fields = clone._introspect().values()
+            # TODO: assure data integrity!!
+            pairs = zip(fields, values)
+            for field, value in pairs:
+                field.put_value(value)
+                retval.append(clone)
+        return retval
 
     def sync(self):
         fields = self._introspect()

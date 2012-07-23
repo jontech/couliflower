@@ -23,6 +23,12 @@ class Adapter(object):
         cur.execute(query)
         self.conn.commit()
 
+    def filter(self):
+        cur = self.conn.cursor()
+        cur.execute("SELECT * FROM {0}".format(self.table_name))
+        rows = cur.fetchall()
+        return rows
+
     def _create_table(self, name, fields, **options):
         columns = []
         for field_name, field in fields.items():

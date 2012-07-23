@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from cauliflower.model import Model, Field
-from cauliflower.model import string_field, boolean_field, numeric_field 
+from cauliflower.model import string_field, boolean_field, numeric_field
 
 
 class Cup(Model):
@@ -52,3 +52,9 @@ class TestModel(TestCase):
         self.cup.has_handle = 'false'
         self.cup.capacity = 120
         self.cup.save()
+
+    def test_filter(self):
+        cups = self.cup.filter()
+        self.assertEqual(cups[0].color.value, 'green')
+        self.assertEqual(cups[0].has_handle.value, 'false')
+        self.assertEqual(cups[0].capacity.value, '120')
