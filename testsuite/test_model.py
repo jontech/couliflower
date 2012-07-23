@@ -6,6 +6,7 @@ from cauliflower.model import string_field, boolean_field, numeric_field
 
 
 class Cup(Model):
+    """Test Model with some fields also to test"""
 
     color = string_field()
     has_handle = boolean_field()
@@ -53,8 +54,16 @@ class TestModel(TestCase):
         self.cup.capacity = 120
         self.cup.save()
 
-    def test_filter(self):
+    def test_filter_everything(self):
+        """Should get all records for given Model"""
         cups = self.cup.filter()
         self.assertEqual(cups[0].color.value, 'green')
         self.assertEqual(cups[0].has_handle.value, 'false')
         self.assertEqual(cups[0].capacity.value, '120')
+
+    def test_filter_by_color(self):
+        """Should get only red cups"""
+        cups = self.cup.filter(color='red')
+        self.assertEqual(cups[0].color.value, 'red')
+        self.assertEqual(cups[1].color.value, 'red')
+        self.assertEqual(cups[3].color.value, 'red')

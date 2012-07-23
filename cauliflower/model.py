@@ -68,10 +68,10 @@ class Model(object):
             values.append(attr)
         self.storage.save(values)
 
-    def filter(self):
+    def filter(self, **query_args):
         """Gets data from storage, builds Model objects and returns list"""
         retval = []
-        values_list = self.storage.filter()
+        values_list = self.storage.filter(**query_args)
         for values in values_list:
             clone = copy(self)
             fields = clone._introspect().values()

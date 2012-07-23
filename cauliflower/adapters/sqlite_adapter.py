@@ -23,11 +23,18 @@ class Adapter(object):
         cur.execute(query)
         self.conn.commit()
 
-    def filter(self):
+    def filter(self, **query_args):
         cur = self.conn.cursor()
-        cur.execute("SELECT * FROM {0}".format(self.table_name))
-        rows = cur.fetchall()
-        return rows
+        if query_args:
+            param_arg = lambda x: "{0}='{1}'".format(x[0], x[1])
+            where_query = ','.join(map(param_arg, query_args.items()))
+            query = "SELECT * FROM {0} WHERE {1}".format(self.table_name,
+                                                         where_query)
+            cur.execute(query)
+        else:
+            cur.execute("SELECT * FROM {0}".format(self.table_name))
+        recs = cur.fetchall()
+        return recs
 
     def _create_table(self, name, fields, **options):
         columns = []
