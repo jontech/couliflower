@@ -34,6 +34,11 @@ class TestModel(TestCase):
         self.assertTrue(isinstance(field['color'], Field))
         self.assertEqual(field['color']._field_type, 'string')
 
+    def test_set_field_value(self):
+        """Should put value 'red' into Field object"""
+        self.cup.color = 'red'
+        self.assertEqual(self.cup.color.value, 'red')
+
     def test_save(self):
         """Should save data by model"""
         # create red cup

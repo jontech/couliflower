@@ -15,7 +15,8 @@ class Adapter(object):
         self.table_name = table_name
         self._create_table(table_name, fields)
 
-    def save(self, values):
+    def save(self, fields):
+        values = [field.value for field in fields]
         query = "INSERT INTO {0} VALUES {1}".format(self.table_name,
                                                     tuple(values))
         cur = self.conn.cursor()

@@ -17,6 +17,8 @@ def boolean_field(**kwargs):
 class Field(object):
 
     def __init__(self, field_type, **kwargs):
+        """Initialize field type"""
+        # TODO: check if given field type is supported
         self._field_type = field_type
         attributes = kwargs
 
@@ -24,8 +26,23 @@ class Field(object):
     def field_type(self):
         return self._field_type
 
+    @property
+    def value(self):
+        return self._value
+
+    def put_value(self, value):
+        """Create value for this field type"""
+        self._value = value
+
 
 class Model(object):
+
+    def __setattr__(self, name, value):
+        field = self._introspect(name=name)
+        if field:
+            field = field[name].put_value(value)
+        else:
+            super(Model, self).__setattr__(name, value)
 
     def __init__(self):
         forge = StorageForge()
