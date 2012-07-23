@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
 
-from cauliflower.model import Model
+from cauliflower.model import Model, Field
 from cauliflower.model import string_field, boolean_field, numeric_field 
 
 
@@ -22,8 +22,8 @@ class TestModel(TestCase):
         del self.cup
 
     def test_intropsect(self):
-        """Should find out model fields"""
-        fields = self.cup.fields
+        """Should find out all model Field attributes"""
+        fields = self.cup._introspect()
         self.assertEqual(fields['color'], self.cup.color)
         self.assertEqual(fields['has_handle'], self.cup.has_handle)
         self.assertEqual(fields['capacity'], self.cup.capacity)

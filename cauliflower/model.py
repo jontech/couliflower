@@ -51,7 +51,8 @@ class Model(object):
 
     def save(self):
         values = []
-        for name, field in self.fields.items():
+        fields = self._introspect()
+        for name, field in fields.items():
             attr = getattr(self, name)
             # TODO: check type, if exists
             values.append(attr)
