@@ -2,15 +2,14 @@
 from unittest import TestCase
 
 from cauliflower.model import Model, Field
-from cauliflower.model import string_field, boolean_field, numeric_field
 
 
 class Cup(Model):
     """Test Model with some fields also to test"""
 
-    color = string_field()
-    has_handle = boolean_field()
-    capacity = numeric_field()
+    color = Field.string()
+    has_handle = Field.boolean()
+    capacity = Field.numeric()
 
 
 class TestModel(TestCase):
@@ -59,7 +58,7 @@ class TestModel(TestCase):
         cups = self.cup.filter()
         self.assertEqual(cups[0].color.value, 'green')
         self.assertEqual(cups[0].has_handle.value, 'false')
-        self.assertEqual(cups[0].capacity.value, '120')
+        self.assertEqual(cups[0].capacity.value, 120)
 
     def test_filter_by_color(self):
         """Should get only red cups"""

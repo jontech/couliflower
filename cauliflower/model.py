@@ -4,25 +4,26 @@ from copy import copy
 from cauliflower.forge import StorageForge
 
 
-def string_field(**kwargs):
-    return Field('string', **kwargs)
-
-
-def numeric_field(**kwargs):
-    return Field('numeric', **kwargs)
-
-
-def boolean_field(**kwargs):
-    return Field('boolean', **kwargs)
-
 
 class Field(object):
 
-    def __init__(self, field_type, **kwargs):
+    def __init__(self, field_type):
         """Initialize field type"""
         # TODO: check if given field type is supported
         self._field_type = field_type
-        attributes = kwargs
+
+    @classmethod
+    def string(cls):
+        print cls
+        return cls('string')
+
+    @classmethod
+    def numeric(cls):
+        return cls('numeric')
+
+    @classmethod
+    def boolean(cls):
+        return cls('boolean')
 
     @property
     def field_type(self):
