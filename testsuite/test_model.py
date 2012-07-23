@@ -28,6 +28,12 @@ class TestModel(TestCase):
         self.assertEqual(fields['has_handle'], self.cup.has_handle)
         self.assertEqual(fields['capacity'], self.cup.capacity)
 
+    def test_name_introspect(self):
+        """Should find one model Field attribute"""
+        field = self.cup._introspect(name='color')
+        self.assertTrue(isinstance(field['color'], Field))
+        self.assertEqual(field['color']._field_type, 'string')
+
     def test_save(self):
         """Should save data by model"""
         # create red cup

@@ -44,12 +44,15 @@ class Model(object):
         fields = self._introspect()
         self.storage.sync(self.name, fields)
 
-    def _introspect(self):
+    def _introspect(self, name=None):
         """Finds properties and registers them to use within adapter"""
         fields = {}
         for attr_name in dir(self):
             attr = getattr(self, attr_name)
             if isinstance(attr, Field):
-                if attr_name not in fields:
+                if name is not None:
+                    if attr_name == name:
+                        return {attr_name: attr}
+                else:
                     fields[attr_name] = attr
         return fields
