@@ -40,10 +40,15 @@ class Field(object):
 class Model(object):
 
     def __setattr__(self, name, value):
+        """Control Model values assignment -- if we are assigning Field
+        attribute, assign value to Field else do assignment as usual.
+
+        """
         field = self._introspect(name=name)
         if field:
             field = field[name].put_value(value)
         else:
+            # TODO: raise error instead?
             super(Model, self).__setattr__(name, value)
 
     def __init__(self):
@@ -54,6 +59,7 @@ class Model(object):
         self.name = self.__class__.__name__.lower()
 
     def save(self):
+        """Store Model Field values to storage"""
         values = []
         fields = self._introspect()
         for name, field in fields.items():
@@ -77,6 +83,7 @@ class Model(object):
         return retval
 
     def sync(self):
+        """Syncs storage with Model schema"""
         fields = self._introspect()
         self.storage.sync(self.name, fields)
 
