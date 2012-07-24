@@ -53,7 +53,8 @@ class Model(object):
 
     def __init__(self):
         self.storage = StorageForge()
-        self.name = self.__class__.__name__.lower()
+        name = self.__class__.__name__.lower()
+        self.storage.set_model_name(name)
 
     def save(self):
         """Store Model Field values to storage"""
@@ -79,10 +80,13 @@ class Model(object):
                 retval.append(clone)
         return retval
 
-    def sync(self):
+    @classmethod
+    def sync(cls):
         """Syncs storage with Model schema"""
-        fields = self._introspect()
-        self.storage.sync(self.name, fields)
+        fields = cls._introspect()
+        storage = StorageForge()
+        model_name = cls.__name__.lower()
+        storage.sync(model_name, fields)
 
     @classmethod
     def _introspect(cls, name=None):

@@ -8,11 +8,12 @@ class Adapter(object):
         if '.db' not in database:
             database += '.db'
         self.conn = sqlite3.connect(database)
+        self.table_name = None
+
+    def set_model_name(self, model_name):
+        self.table_name = model_name
 
     def sync(self, table_name, fields):
-        # TODO: register created tables and columns or try to get
-        #       from db if there is API
-        self.table_name = table_name
         self._create_table(table_name, fields)
 
     def save(self, fields):
