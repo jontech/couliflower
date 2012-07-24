@@ -52,10 +52,7 @@ class Model(object):
             super(Model, self).__setattr__(name, value)
 
     def __init__(self):
-        forge = StorageForge()
-        # TODO: fix forge build method name to build_storage
-        self.storage = forge.build()
-        # TODO: put this to forge build as name argument
+        self.storage = StorageForge()
         self.name = self.__class__.__name__.lower()
 
     def save(self):
