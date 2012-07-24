@@ -14,7 +14,6 @@ class Field(object):
 
     @classmethod
     def string(cls):
-        print cls
         return cls('string')
 
     @classmethod

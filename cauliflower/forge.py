@@ -23,24 +23,26 @@ class Forge(object):
 
 class StorageForge(Forge):
 
-    def __init__(self):
+    def __new__(cls):
         """load configuration configuration needed for storage adapter loading"""
-        self.adapters_dir = 'cauliflower.adapters'
-        # TODO: move config loading to parent class
+        adapters_dir = 'cauliflower.adapters'
         try:
-            self.adapter_name = config.STORAGE_NAME
-            self.adapter_conf = config.STORAGE_CONF
+            adapter_name = config.STORAGE_NAME
+            adapter_conf = config.STORAGE_CONF
         except AttributeError as e:
             missing = str(e).split()[-1]
             raise StoreConfigError("Missing {0} configuration".format(missing))
+        storage = cls._load_adapter(adapter_name, adapters_dir, adapter_conf)
+        return storage
 
-    def build(self):
+    @classmethod
+    def _load_adapter(cls, adapter_name, adapters_dir, adapter_conf):
         """Attempt to load storage adapter using configuration and pass
         it to return.
         """
-        full_adapter_name = self.adapter_name + '_adapter'
-        adapter_toimport = '.'.join((self.adapters_dir, full_adapter_name))
+        full_adapter_name = adapter_name + '_adapter'
+        adapter_toimport = '.'.join((adapters_dir, full_adapter_name))
         __import__(adapter_toimport)
         module = sys.modules[adapter_toimport]
         Adapter = getattr(module, 'Adapter')
-        return Adapter(**self.adapter_conf)
+        return Adapter(**adapter_conf)
