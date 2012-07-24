@@ -9,7 +9,6 @@ class Field(object):
 
     def __init__(self, field_type):
         """Initialize field type"""
-        # TODO: check if given field type is supported
         self._field_type = field_type
 
     @classmethod
@@ -51,7 +50,6 @@ class Model(object):
         if field:
             field = field[name].put_value(value)
         else:
-            # TODO: raise error instead?
             super(Model, self).__setattr__(name, value)
 
     def __init__(self, **values):
@@ -67,7 +65,6 @@ class Model(object):
         fields = self._introspect()
         for name, field in fields.items():
             attr = getattr(self, name)
-            # TODO: check type, if exists
             values.append(attr)
         model_name = self.get_model_name()
         self.storage.save(model_name, values)

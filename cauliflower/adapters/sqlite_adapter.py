@@ -22,7 +22,6 @@ class Adapter(object):
         values = [field.value for field in fields]
         query = "INSERT INTO {0} VALUES {1}".format(table_name,
                                                     tuple(values))
-        print query
         cur = self.conn.cursor()
         cur.execute(query)
         self.conn.commit()
