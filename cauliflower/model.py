@@ -53,8 +53,6 @@ class Model(object):
 
     def __init__(self):
         self.storage = StorageForge()
-        name = self.__class__.__name__.lower()
-        self.storage.set_model_name(name)
 
     def save(self):
         """Store Model Field values to storage"""
@@ -64,20 +62,24 @@ class Model(object):
             attr = getattr(self, name)
             # TODO: check type, if exists
             values.append(attr)
-        self.storage.save(values)
+        model_name = self.get_model_name()
+        self.storage.save(model_name, values)
 
-    def filter(self, **query_args):
+    @classmethod
+    def filter(cls, **query_args):
         """Gets data from storage, builds Model objects and returns list"""
         retval = []
-        values_list = self.storage.filter(**query_args)
+        storage = StorageForge()
+        model_name = cls.get_model_name()
+        values_list = storage.filter(model_name, **query_args)
         for values in values_list:
-            clone = copy(self)
-            fields = clone._introspect().values()
+            inst = cls()
+            fields = inst._introspect().values()
             # TODO: assure data integrity!!
             pairs = zip(fields, values)
             for field, value in pairs:
                 field.put_value(value)
-                retval.append(clone)
+                retval.append(inst)
         return retval
 
     @classmethod
@@ -85,7 +87,7 @@ class Model(object):
         """Syncs storage with Model schema"""
         fields = cls._introspect()
         storage = StorageForge()
-        model_name = cls.__name__.lower()
+        model_name = cls.get_model_name()
         storage.sync(model_name, fields)
 
     @classmethod
@@ -101,3 +103,7 @@ class Model(object):
                 else:
                     fields[attr_name] = attr
         return fields
+
+    @classmethod
+    def get_model_name(cls):
+        return cls.__name__.lower()
