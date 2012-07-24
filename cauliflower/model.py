@@ -84,11 +84,12 @@ class Model(object):
         fields = self._introspect()
         self.storage.sync(self.name, fields)
 
-    def _introspect(self, name=None):
+    @classmethod
+    def _introspect(cls, name=None):
         """Finds properties and registers them to use within adapter"""
         fields = {}
-        for attr_name in dir(self):
-            attr = getattr(self, attr_name)
+        for attr_name in dir(cls):
+            attr = getattr(cls, attr_name)
             if isinstance(attr, Field):
                 if name is not None:
                     if attr_name == name:
