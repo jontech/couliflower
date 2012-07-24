@@ -34,7 +34,10 @@ class Field(object):
 
     def put_value(self, value):
         """Create value for this field type"""
-        self._value = value
+        if self._field_type == 'string':
+            self._value = str(value)
+        else:
+            self._value = value
 
 
 class Model(object):
@@ -51,7 +54,11 @@ class Model(object):
             # TODO: raise error instead?
             super(Model, self).__setattr__(name, value)
 
-    def __init__(self):
+    def __init__(self, **values):
+        if values:
+            for name, value in values.items():
+                field = getattr(self, name)
+                field.put_value(value)
         self.storage = StorageForge()
 
     def save(self):
@@ -73,13 +80,8 @@ class Model(object):
         model_name = cls.get_model_name()
         values_list = storage.filter(model_name, **query_args)
         for values in values_list:
-            inst = cls()
-            fields = inst._introspect().values()
-            # TODO: assure data integrity!!
-            pairs = zip(fields, values)
-            for field, value in pairs:
-                field.put_value(value)
-                retval.append(inst)
+            inst = cls(**values)
+            retval.append(inst)
         return retval
 
     @classmethod

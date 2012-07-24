@@ -8,6 +8,12 @@ class Adapter(object):
         if '.db' not in database:
             database += '.db'
         self.conn = sqlite3.connect(database)
+        def as_dictionary(cursor, record):
+            retval = {}
+            for i, col in enumerate(cursor.description):
+                retval[col[0]] = record[i]
+            return retval
+        self.conn.row_factory = as_dictionary
 
     def sync(self, table_name, fields):
         self._create_table(table_name, fields)
@@ -16,6 +22,7 @@ class Adapter(object):
         values = [field.value for field in fields]
         query = "INSERT INTO {0} VALUES {1}".format(table_name,
                                                     tuple(values))
+        print query
         cur = self.conn.cursor()
         cur.execute(query)
         self.conn.commit()

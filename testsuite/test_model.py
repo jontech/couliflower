@@ -12,11 +12,13 @@ class Cup(Model):
     capacity = Field.numeric()
 
 
+Cup.sync()
+
+
 class TestModel(TestCase):
 
     def setUp(self):
         self.cup = Cup()
-        self.cup.sync()
 
     def tearDown(self):
         del self.cup
