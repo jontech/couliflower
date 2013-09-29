@@ -20,24 +20,7 @@ class StoreConfigError(Exception):
         return repr(self.value)
 
 
-class Forge(object):
-    """Provides basic methods for objects made using config
-
-    including:
-        - common methods for object building
-        - configuration validation
-        - object build prior, posterior signaling
-
-    """
-
-    def build(self):
-        raise NotImplementedError("build should be implemented in subclass")
-
-    def rebuild(self):
-        raise NotImplementedError("rebuild should be implemented in subclass")
-
-
-class StorageForge(Forge):
+class StorageForge(object):
     """Forge used to build Storage instances"""
 
     def __new__(cls):
