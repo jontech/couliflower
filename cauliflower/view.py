@@ -1,4 +1,15 @@
-#!/usr/bin/env python
+"""View module
+
+provides View definition where Request object is created and passed
+to the function. View function is responsible to provide Response
+object.
+
+View are used by defining function which accepts Request object and
+additionally URL path arguments and returns Response object. To
+register view Router.route decorator is used with URL and HTTP
+method as arguments.
+
+"""
 import sys
 
 from webob import Request, Response
@@ -6,7 +17,7 @@ from webob import exc
 
 
 def load_view(string):
-    """Loads view from specific module.
+    """View loader which .
 
     :param string: must be doted path to ``view_module.view``
 

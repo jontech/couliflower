@@ -1,4 +1,9 @@
-# -*- coding: utf-8 -*-
+"""Forge module
+
+Central place where every config-related instances gets created. All config
+validations required for instance creation are done here.
+
+"""
 import os
 import sys
 
@@ -6,13 +11,24 @@ from cauliflower import config
 
 
 class StoreConfigError(Exception):
+    """Storage specific error"""
+
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
 
 
 class Forge(object):
+    """Provides basic methods for objects made using config
+
+    including:
+        - common methods for object building
+        - configuration validation
+        - object build prior, posterior signaling
+
+    """
 
     def build(self):
         raise NotImplementedError("build should be implemented in subclass")
@@ -22,9 +38,10 @@ class Forge(object):
 
 
 class StorageForge(Forge):
+    """Forge used to build Storage instances"""
 
     def __new__(cls):
-        """load configuration configuration needed for storage adapter loading"""
+        """Creates new storage and returns it also ensures config validity"""
         adapters_dir = 'cauliflower.adapters'
         try:
             adapter_name = config.STORAGE_NAME
@@ -37,8 +54,14 @@ class StorageForge(Forge):
 
     @classmethod
     def _load_adapter(cls, adapter_name, adapters_dir, adapter_conf):
-        """Attempt to load storage adapter using configuration and pass
-        it to return.
+        """Here we load our storage adapter
+
+        :param: adapter_name - as string of adapter name
+        :param: adapters_dir - as string path to dir where storage adapters are
+        :param: adaper_conf - as dict holding database access settings
+
+        :returns: Adapter instance as storage
+
         """
         full_adapter_name = adapter_name + '_adapter'
         adapter_toimport = '.'.join((adapters_dir, full_adapter_name))
