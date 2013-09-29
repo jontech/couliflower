@@ -5,7 +5,7 @@ from cauliflower.model import Model, Field
 
 
 class Cup(Model):
-    """Test Model with some fields also to test"""
+    """Model to test"""
 
     color = Field.string()
     has_handle = Field.boolean()
@@ -18,53 +18,71 @@ Cup.sync()
 class TestModel(TestCase):
 
     def setUp(self):
-        self.cup = Cup()
+        """Creates some cups"""
+        # create red cup
+        cup = Cup()
+        cup.color = 'red'
+        cup.has_handle = 'true'
+        cup.capacity = 250
+        cup.save()
+
+        # now create green cup
+        cup = Cup()
+        cup.color = 'green'
+        cup.has_handle = 'false'
+        cup.capacity = 120
+        cup.save()
 
     def tearDown(self):
-        del self.cup
+        """Removes all cups"""
+        Cup.flush() 
 
     def test_intropsect(self):
         """Should find out all model Field attributes"""
-        fields = self.cup._introspect()
-        self.assertEqual(fields['color'], self.cup.color)
-        self.assertEqual(fields['has_handle'], self.cup.has_handle)
-        self.assertEqual(fields['capacity'], self.cup.capacity)
+        cup = Cup()
+        fields = cup._introspect()
+        self.assertEqual(fields['color'], cup.color)
+        self.assertEqual(fields['has_handle'], cup.has_handle)
+        self.assertEqual(fields['capacity'], cup.capacity)
 
     def test_name_introspect(self):
         """Should find one model Field attribute"""
-        field = self.cup._introspect(name='color')
+        cup = Cup()
+        field = cup._introspect(name='color')
         self.assertTrue(isinstance(field['color'], Field))
         self.assertEqual(field['color']._field_type, 'string')
 
     def test_set_field_value(self):
         """Should put value 'red' into Field object"""
-        self.cup.color = 'red'
-        self.assertEqual(self.cup.color.value, 'red')
-
-    def test_save(self):
-        """Should save data by model"""
-        # create red cup
-        self.cup.color = 'red'
-        self.cup.has_handle = 'true'
-        self.cup.capacity = 250
-        self.cup.save()
-
-        # now create green cup
-        self.cup.color = 'green'
-        self.cup.has_handle = 'false'
-        self.cup.capacity = 120
-        self.cup.save()
+        cup = Cup()
+        cup.color = 'red'
+        self.assertEqual(cup.color.value, 'red')
 
     def test_filter_everything(self):
         """Should get all records for given Model"""
-        cups = self.cup.filter()
+        cups = Cup.filter()
         self.assertEqual(cups[0].color.value, 'green')
         self.assertEqual(cups[0].has_handle.value, 'false')
         self.assertEqual(cups[0].capacity.value, 120)
+        self.assertEqual(len(cups), 2)
 
     def test_filter_by_color(self):
         """Should get only red cups"""
-        cups = self.cup.filter(color='red')
+        # create red cup
+        cup = Cup()
+        cup.color = 'red'
+        cup.has_handle = 'true'
+        cup.capacity = 100
+        cup.save()
+
+        # create red cup
+        cup = Cup()
+        cup.color = 'red'
+        cup.has_handle = 'true'
+        cup.capacity = 120
+        cup.save()
+
+        cups = Cup.filter(color='red')
         self.assertEqual(cups[0].color.value, 'red')
         self.assertEqual(cups[1].color.value, 'red')
-        self.assertEqual(cups[3].color.value, 'red')
+        self.assertEqual(cups[2].color.value, 'red')

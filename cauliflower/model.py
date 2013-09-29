@@ -148,6 +148,14 @@ class Model(object):
         storage.sync(model_name, fields)
 
     @classmethod
+    def flush(cls):
+        """Deletes all Model entries in storage"""
+        fields = cls._introspect()
+        storage = StorageForge()
+        model_name = cls.get_model_name()
+        storage.flush(model_name)
+
+    @classmethod
     def _introspect(cls, name=None):
         """Looks for defined Field in the Model definition
 

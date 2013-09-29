@@ -56,6 +56,17 @@ class Adapter(object):
         """
         self._create_table(table_name, fields)
 
+    def flush(self, table_name):
+        """Deletes ALL table records by table name
+
+        :param: table_name - string name of table
+
+        """
+        query = "DELETE FROM {0}".format(table_name)
+        cur = self.conn.cursor()
+        cur.execute(query)
+        self.conn.commit()
+
     def save(self, table_name, fields):
         """Inserts new record into table
 
