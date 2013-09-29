@@ -89,11 +89,11 @@ class Router(object):
                   when View was not found
 
         """
-        req = Request(environ)
-        for regex, controller, vars in self.routes:
-            match = regex.match(req.path_info)
+        request = Request(environ)
+        for route_regex, view, vars in self.routes:
+            match = route_regex.match(request.path_info)
             if match:
-                req.urlvars = match.groupdict()
-                req.urlvars.update(vars)
-                return controller(environ, start_response)
+                request.urlvars = match.groupdict()
+                request.urlvars.update(vars)
+                return view(environ, start_response)
         return exc.HTTPNotFound()(environ, start_response)
