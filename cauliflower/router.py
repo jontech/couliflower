@@ -3,8 +3,6 @@ import re
 from webob import Request
 from webob import exc
 
-from cauliflower.view import load_view, view
-
 
 # this regular expression extracts URI path arguments
 var_regex = re.compile(r'''
@@ -16,10 +14,10 @@ var_regex = re.compile(r'''
 
 
 def build_route(template):
-    """Builds regex out of template which then used to match URI path
+    """Builds regex out of path defined creating View
 
-    :param template: URI path template string which we define in View
-    :returns: regular expression string to match URI's
+    :param template: URI path string which we define in View
+    :returns: regular expression string to match URIs
 
     """
     regex = ''
@@ -38,12 +36,12 @@ def build_route(template):
 
 
 class Router(object):
-    """URI routing to Views
+    """URI routing throughout View functions
 
-    provides methods and decorators to register URI and attach View.
+    provides methods and decorators to register URI to a function
 
     Router it self is WSGI application which could run with WSGI
-    servers like Python wsgiref.simple_server.
+    servers like wsgiref.
 
     """
 
@@ -51,30 +49,27 @@ class Router(object):
         """Initialise Router instance with empty route list"""
         self.routes = []
 
-    def add_route(self, route, view, **vars):
-        """Registers URI route with view and optional args
+    def add_route(self, route, view):
+        """Registers URI route with view
 
         :param: route - string containing URI path
-        :param: view - view function or string as dotted path to view function
-        :param: vars - dict with option URI path arguments
+        :param: view - callable view function
 
         """
-        if isinstance(view, basestring):
-            view = load_view(view)
         route_rule = re.compile(build_route(route))
-        self.routes.append((route_rule, view, vars))
+        self.routes.append((route_rule, view))
 
-    def route(self, route, **vars):
-        """Decorator for view functions which registers URI to view
+    def route(self, route):
+        """Decorates View function which is then gets registered
 
-        :param: route - string containing URI
-        :param: vars - holds URI path arguments
-        :returns: wrapper function
+        :param: route - string containing URI path
+        :returns: View register function
 
         """
-        def wraper(f):
-            self.add_route(route, view(f), **vars)
-        return wraper
+        def wrapper(view):
+            """Registers URI path regex to a view"""
+            self.add_route(route, view)
+        return wrapper
 
     def __call__(self, environ, start_response):
         """WSGI application signature method
@@ -83,6 +78,9 @@ class Router(object):
         contains Request information and also information to build
         Response.
 
+        This is the place where Response object gets built and Response
+        from View is called to start actual response.
+
         :param: environ - dict holding WSGI environment with request data
         :param: start_response - dict holding WSGI data for response
         :returns: WSGI compatible view function or HTTPNotFound response
@@ -90,10 +88,10 @@ class Router(object):
 
         """
         request = Request(environ)
-        for route_regex, view, vars in self.routes:
+        for route_regex, view in self.routes:
             match = route_regex.match(request.path_info)
             if match:
-                request.urlvars = match.groupdict()
-                request.urlvars.update(vars)
-                return view(environ, start_response)
+                uri_args = match.groupdict()
+                resp = view(request, **uri_args)
+                return resp(environ, start_response)
         return exc.HTTPNotFound()(environ, start_response)

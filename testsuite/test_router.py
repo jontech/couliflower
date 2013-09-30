@@ -1,11 +1,11 @@
 import types
 from unittest import TestCase, TestLoader
-from webob import Request
+from webob import Request, Response
 
 from cauliflower.router import build_route, Router
 
 
-class TestRouting(TestCase):
+class TestRouter(TestCase):
     """Test the routing from URI to view loaded"""
 
     def setUp(self):
@@ -20,39 +20,37 @@ class TestRouting(TestCase):
         """Should register root URI path using router"""
 
         def dofoo():
-            return 'yay'
+            return Response(body='what a test')
 
         self.router.add_route('/', dofoo)
 
         self.assertEqual(len(self.router.routes), 1)
-        res_repath, res_view, res_extra = self.router.routes[0]
+        res_repath, res_view = self.router.routes[0]
         self.assertEqual(res_repath.pattern, '^\/$')
         self.assertEqual(res_view, dofoo)
-        self.assertEqual(res_extra, {})
 
     def test_decorated_view(self):
         """Should register root URI path using router decorator"""
 
         @self.router.route('/')
         def dofoo():
-            return 'yay'
+            return Response(body='what a test')
 
         self.assertEqual(len(self.router.routes), 1)
-        res_repath, res_view, res_extra = self.router.routes[0]
+        res_repath, res_view = self.router.routes[0]
         self.assertEqual(res_repath.pattern, '^\/$')
         self.assertTrue(isinstance(res_view, types.FunctionType))
-        self.assertEqual(res_extra, {})
 
     def test_pathargs_rule(self):
         """Should register regex to parse args from URI path"""
 
         def dofoo():
-            return 'yay'
+            return Response(body='what a test')
 
         self.router.add_route('/<foo>', dofoo)
 
         self.assertEqual(len(self.router.routes), 1)
-        res_repath, res_view, res_extra = self.router.routes[0]
+        res_repath, res_view = self.router.routes[0]
         self.assertEqual(res_repath.pattern, '^\\/(?P<foo>[^/]+)$')
 
     def test_view_pathargs(self):
@@ -60,11 +58,11 @@ class TestRouting(TestCase):
 
         @self.router.route('/songs/<name>')
         def sing(request, name=None):
-            return name
+            return Response(body=name)
 
         request = Request.blank('/songs/daisy')
-
         response = request.get_response(self.router)
+
         self.assertEqual(response.body, 'daisy')
 
     def test_uri_query(self):
@@ -73,12 +71,28 @@ class TestRouting(TestCase):
         @self.router.route('/tada')
         def dofoo(request):
             foo = request.GET.get('foo')
-            return foo
+            return Response(body=foo)
 
         request = Request.blank('/tada?foo=bar')
-
         response = request.get_response(self.router)
+
         self.assertEqual(response.body, 'bar')
+
+    def test_multi_views(self):
+        """Should circus view when there are other views defined"""
+
+        @self.router.route('/pizza')
+        def pizza(request):
+            return Response(body="pepperoni")
+
+        @self.router.route('/sushi')
+        def sushi(request):
+            return Response(body="maki")
+
+        request = Request.blank('/sushi')
+        response = request.get_response(self.router)
+
+        self.assertEqual(response.body, 'maki')
 
     def test_static_path(self):
         """Should create regex to match URI path without args"""
