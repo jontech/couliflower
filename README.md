@@ -1,7 +1,4 @@
-couliflower the framework..
-===========================
-
-This project was meant only for **learning** purpose to better understand how real web framework works. It uses WebOB request/response library which is simply just request and response objects used to bypass all WSGI environment handling (definitely next project).
+cauliflower project was meant only for **learning** purpose to better understand how real web framework works. It uses WebOB request/response library which is simply just request and response objects used to bypass all WSGI environment handling (definitely next project).
 
 Cauliflower at the moment supports:
 - URL routing (probably you can use parameters like notes/1)
