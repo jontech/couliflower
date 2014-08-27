@@ -6,14 +6,13 @@ could be later accessed using model's methods.
 Model uses Adapters (or storage back-ends if you will) for accessing storages
 like databases. For more about adapters see cauliflower/adapters package.
 
-Here one can also find Filed implementation which is used within model to
-abstract data types and pass on to Adapters.
+Here one can also find Field implementation which is used within model to
+define data types for Adapters.
 
 """
-from copy import copy
+import copy
 
 from cauliflower.forge import StorageForge
-
 
 
 class Field(object):
@@ -77,11 +76,16 @@ class Model(object):
     data schema with actual data storage.
 
     """
+    def __new__(cls, **kwargs):
+        user_model_inst = super(Model, cls).__new__(cls, **kwargs)
+        return user_model_inst
 
     def __setattr__(self, name, value):
-        """Here we actually put data value to Field according attribute
+        """Here we define how user values should be assigned
 
-        :param: name - string name of an instance attribute
+        When Field does not exists by name it will be added
+
+        :param: name - string name of an Field
         :param: value - data value which gets passed to Field
 
         """
@@ -92,7 +96,7 @@ class Model(object):
             super(Model, self).__setattr__(name, value)
 
     def __init__(self, **values):
-        """During initializationdf  it is possible to set all Fields
+        """During initialization  it is possible to set all Fields
 
         To set Field values during Model initialization time a dict
         of field names and values is required in such form:
@@ -103,6 +107,8 @@ class Model(object):
         if values:
             for name, value in values.items():
                 field = getattr(self, name)
+                # FIXME field value gets overwritten when creating multiple
+                #       instances
                 field.put_value(value)
         self.storage = StorageForge()
 
@@ -135,8 +141,7 @@ class Model(object):
         model_name = cls.get_model_name()
         values_list = storage.filter(model_name, **query_args)
         for values in values_list:
-            inst = cls(**values)
-            retval.append(inst)
+            retval.append(cls(**values))
         return retval
 
     @classmethod
@@ -160,7 +165,7 @@ class Model(object):
         """Looks for defined Field in the Model definition
 
         :param: name - string name of specific Field (optional)
-        :returns: dict of Fields or one Field if ``name`` given
+        :returns: dict of {'name': Field,} or first matched Field if ``name`` given
 
         """
         fields = {}

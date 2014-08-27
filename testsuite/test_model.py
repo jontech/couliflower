@@ -61,10 +61,10 @@ class TestModel(TestCase):
     def test_filter_everything(self):
         """Should get all records for given Model"""
         cups = Cup.filter()
-        self.assertEqual(cups[0].color.value, 'green')
-        self.assertEqual(cups[0].has_handle.value, 'false')
-        self.assertEqual(cups[0].capacity.value, 120)
         self.assertEqual(len(cups), 2)
+
+        self.assertEqual(cups[0].color.value, 'green')
+        self.assertEqual(cups[1].color.value, 'red')
 
     def test_filter_by_color(self):
         """Should get only red cups"""
