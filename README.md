@@ -15,14 +15,14 @@ from cauliflower.router import Router
 hello_router = Router()
 
 
-@hello_notes.route('/')
+@hello_router.route('/')
 def hello(request):
     return Response('Hello world!')
 
 
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
-    server = make_server('127.0.0.1', 8080, hello_notes)
+    server = make_server('127.0.0.1', 8080, hello_router)
     server.serve_forever()
 ```
 
