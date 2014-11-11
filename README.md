@@ -26,4 +26,4 @@ if __name__ == '__main__':
     server.serve_forever()
 ```
 
-You can use this code however you like and on your own risks, maybe you will find something useful but in result this code is useless.
+You can use this code however you like ON YOUR OWN RISK.
